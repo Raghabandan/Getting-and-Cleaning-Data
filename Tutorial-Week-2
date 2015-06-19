@@ -1,0 +1,123 @@
+
+install.packages("DBI")
+install.packages("RJDBC")
+
+install.packages("RMySQL")
+ucscDb<- dbConnect(mysql(), user="genome", host="genome-mysql.cse.ucsc.edu")
+result<- db
+
+# Downloading RHDF5 package
+source("http://bioconductor.org/biocLite.R")
+biocLite("rhdf5")
+
+# creating hdf file 
+
+library(rhdf5)
+created= h5createFile("example.h5")   
+created
+
+# creating groups and subgroup within the files
+
+created= h5createGroup("example.h5", "foo") 
+created= h5createGroup("example.h5", "baa") 
+created= h5createGroup("example.h5", "foo/foobaa")          # Subgroup
+h5ls("example.h5")  
+
+# Writing matrix and arrays and dataset to the groups
+
+A= matrix(1:10, nr=5 , nc=2)
+hfwrite(A, "example.h5", "foo/A")
+
+B= array(seq(0.1,2.0, by=0.1), dim= c(5,2,2))
+attr(B, "scale") <- "liter"
+hfwrite(B, "example.h5", "foo/foobaa/B")
+
+h5ls("example.h5") 
+
+df= data.frame(1L:5L. seq(0,1,length.out=5), c("ab", "cde", "fghi", "a", "s"), stringAsFactors = FALSE)
+hfwrite(df, "example.h5", "df")
+
+h5ls("example.h5")
+
+# Reading data 
+
+readA= h5read ("example.h5", "foo/A")
+readB= h5read ("example.h5", "foo/foobaa/B") 
+readdf= h5read ("example.h5", "df") 
+readA
+
+h5rwrite(c(12,13,14), "example.h5", "foo/A", index=list(1:3,1))
+h5read ("example.h5", "foo/A")
+
+======================================================================================================
+  
+# Reading data From Web- Webscraping
+  
+con<- url("http://scholar.google.com/citations?user=HI-I6C0AAAAJ")
+htmlcode = readLines(con)   # Reads the web data as unformated data So use xml package
+close(con)
+htmlcode
+
+library(XML)
+url<- "http://scholar.google.com/citations?user=HI-I6C0AAAAJ"
+html<- htmlTreeParse(url, useInternalNodes=T)                     # Using internal node to get complete structure out
+
+xpathSApply(html, "//title", xmlValue)                            # Get/extract title tags
+
+xpathSApply(html, "//td[@id= 'col-citedby']", xmlValue)           # Get internal stuffs
+
+# GET from httr package
+
+library(httr); html2= GET(url)
+content2= content(html2, as="text")
+parsedHtml = htmlParse(content2, asText= TRUE)
+xpathSApply(parsedhtml, "//title", xmlValue)                            # Get title tags
+
+
+# Access websites with password
+
+pg1 = GET("...")
+pg1
+
+# We get a response reponse with status 401, So we do with authenticate command
+
+pg2 = GET("............", authenticate("username", "password"))
+pg2
+
+names(pg2)
+
+# Using Handles to save save authenticate websites and it stays in cookies 
+
+
+google = handle("http://www.google.com")
+pg1 = GET (handle= google, path="/")
+pg1 = GET (handle= google, path="search")
+
+======================================================================================================
+Getting Data from API  
+======================================================================================================
+  
+# create an application in for developer website eg: dev.twitter
+# url, Access level, Cunsumer key, Cunsumer secret, request Token
+  
+  
+# To get access
+httr package
+oauth_app()
+sign_oauth1.0()
+
+GET() # IS Resource URL used to get data usually it will be json data
+
+content()  # convert json data into structures r object dataframe 
+
+# That is specific to urs , if all data is required same process link might vary .. easy 
+
+======================================================================================================
+Reading Data from other sources  
+======================================================================================================
+
+# Data from other database like SAS , SPSS using foreign packages and special functions
+
+
+# Reading image, GIS data and music data is also possible
+
