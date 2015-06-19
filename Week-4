@@ -1,0 +1,167 @@
+========================================================================================================
+# EDITING TEXT VARIABLES
+========================================================================================================
+  
+getwd()
+setwd("E:/Ragha/Work")
+fileUrl<- "https://data.baltimorecity.gov/api/views/dz54-2aru/rows.csv?accessType=DOWNLOAD"
+download.file(fileUrl, destfile= "E:/Ragha/Work/data/camera.csv")
+list.files("./data")
+
+dateDownloaded<- date()
+dateDownloaded
+
+cameraData<- read.csv("./data/camera.csv")
+head(cameraData)
+
+# Fixing character vector to lower and higher
+
+names(cameraData)
+tolower(names(cameraData))            
+toupper(names(cameraData)) 
+names(cameraData)
+
+# Splitting variable names, imp parameters a, split
+
+splitNames<- strsplit(names(cameraData), "\\.")             #split on period i.e .
+
+splitNames[[5]]
+splitNames[[6]]                                             # Splitted the . 
+
+# Subset a part of variable name
+
+mylist<- list(letters= c("A", "B", "c"), numbers= 1:3, matrix(1:25, ncol=5))
+mylist
+mylist[1]
+mylist$letters
+mylist[[1]]
+
+# Sapply to used to remove all the part of variable name 
+# sapply()= Applies function to each element in vector or list
+# imp para x, FUN
+
+splitNames[[6]][1]
+
+firstElement<- function(x){x[1]}            # fn to take first element
+sapply(splitNames, firstElement)            # Apply firstElement fn to all elements in list
+                                            # Here we removed .1 from location and likewise
+
+
+
+filUrl1 <- "filUrl1" 
+fileUrl2 <- "filUrl2"
+download.file(filUrl1, destfile= "./data/reviews.csv")
+download.file(filUrl2, destfile= "./data/solutions.csv")
+
+reviews<- read.csv("./data/reviews.csv")
+solutions<- read.csv("./data/solutions.csv")
+
+head(reviews, 2)
+head(solutions, 2)
+
+# substitute the characters in variable name(here _), imp para pattern , replacement, x
+
+names(reviews)
+sub("_", "", names(reviews), )     # sub() Substitutes blank for _
+                                  
+testName<- "this_is_a_test"       
+
+sub("_", "", testName)             # Removes only one instance 
+
+gsub("_", "", testName)            # Gsub() to remove character in multiple instances
+
+
+# Finding values grep(), grepl()
+
+names(cameraData)
+head(cameraData)
+
+grep("Alameda", cameraData$intersection)             # Finds out the location
+
+grepl("Alameda", cameraData$intersection)            # brands each. Logical output so use table for frequency
+table(grepl("Alameda", cameraData$intersection))
+
+# Subsetting 
+
+cameraData2<- cameraData[!grep("Alameda", cameraData$intersection), ]  # Everythg except that state as new dataset
+grep("Alameda", cameraData2$intersection)   
+grepl("Alameda", cameraData2$intersection)
+
+grep("Alameda", cameraData$intersection, value= TRUE)  # returns the value rather than location
+grep("JeffStreet", cameraData$intersection) 
+length(grep("JeffStreet", cameraData$intersection))    # for checking 
+
+# Useful String functions
+
+library(stringr)
+nchar("Tyrion Lanister")
+
+substr("Tyrion Lanister", 1, 6)   # To get part of string from 1 to 6 chars
+substr("Tyrion Lanister", 3, 10)
+
+paste("Sansa", "Stark")
+paste0("Sansa", "Stark")  # Paste w/o seperation
+
+str_trim("Mar          ")
+
+========================================================================================================
+# REGULAR EXPRESSIONS- search through strings to find pattern
+========================================================================================================
+
+# literals, Metacharacters ^, $, [], [-], ., |, ?, ( .*), +, { } and their combination
+
+  
+========================================================================================================
+# WORKING WITH DATES
+========================================================================================================
+
+# Class 
+  
+d1= date()
+d1
+class(d1)
+  
+d2= Sys.Date()
+d2  
+class(d2)
+
+# Formatting dates 
+
+# %y = 2 digit year, %Y = 4 digit year
+# %m = month(00-12), %b = abbreviated month, %B = unabbreviated month
+# %a = abbreviated weekday, %A = unabbreviated weekday
+# %d = day as number (0-31)
+
+format(d2, "%a %b, %d")
+
+# Creating dates
+
+x<- c("1jan1960", "2jan1960", "31mar1960", "30july1960")
+z<- as.Date(x, "%d%b%y")
+z
+
+z[1]-z[2]
+as.numeric(z[1]-z[2])
+
+
+# Converting to julian
+
+d2
+weekdays(d2)
+months(d2)
+julian(d2)
+
+# Lubridate package
+
+library(lubridate)
+
+ymd("20140108")
+mdy("08/04/2013")
+dmy("03-04-2013")
+
+ymd_hms("2014-08-06 10:15:03")
+ymd_hms("2014-08-06 10:15:03", tz= "Pacific/Aukland")
+
+?Sys.timezone
+
+# Some other functions have diff syntax
